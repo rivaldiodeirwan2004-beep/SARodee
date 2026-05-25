@@ -4,6 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard Apps - SARodee</title>
+    <script>
+        if (localStorage.getItem('isLoggedIn') !== 'true') {
+            window.location.href = "login.html";
+        }
+    </script>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -15,15 +20,13 @@
         }
     </script>
 </head>
-<body class="bg-odoo-grayBg h-screen flex flex-col font-sans">
+<body class="bg-odoo-grayBg min-h-screen flex flex-col font-sans">
 
-    <!-- Header Navbar -->
     <header class="bg-odoo-purple text-white h-12 flex items-center justify-between px-6 shadow flex-shrink-0">
         <h1 class="font-bold text-sm tracking-wide">SARodee <span class="font-normal opacity-80">| Control Center</span></h1>
         <button onclick="logout()" class="text-xs bg-red-600 hover:bg-red-700 px-3 py-1.5 rounded transition font-semibold">Keluar</button>
     </header>
 
-    <!-- Pilihan Menu Aplikasi -->
     <main class="flex-1 flex flex-col items-center justify-center p-6 text-center">
         <div class="mb-8">
             <h2 class="text-2xl font-bold text-slate-800">Selamat Datang di SARodee System</h2>
@@ -31,7 +34,6 @@
         </div>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 w-full max-w-xl">
-            <!-- TOMBOL MENU MENUJU KASIR (index.html) -->
             <a href="index.html" class="bg-white p-6 rounded-2xl shadow border border-slate-200 hover:border-odoo-purple hover:shadow-lg transition text-left flex items-center gap-4">
                 <div class="text-4xl bg-purple-50 p-3 rounded-xl">🛒</div>
                 <div>
@@ -40,8 +42,7 @@
                 </div>
             </a>
 
-            <!-- Menu Tambahan (Variasi/Hiasan Sistem) -->
-            <div class="bg-white/60 p-6 rounded-2xl border border-dashed border-slate-300 text-left flex items-center gap-4 opacity-70 cursor-not-allowed">
+            <div class="bg-white/60 p-6 rounded-2xl border border-dashed border-slate-300 text-left flex items-center gap-4 opacity-70 cursor-not-allowed select-none">
                 <div class="text-4xl bg-slate-100 p-3 rounded-xl">📦</div>
                 <div>
                     <h3 class="font-bold text-slate-500 text-base">Inventory & Gudang</h3>
