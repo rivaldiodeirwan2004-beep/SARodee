@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inventaris & Stok - SARodee</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        odoo: {
+                            purple: '#714B67',
+                            dark: '#1E293B',
+                            grayBg: '#F3F4F6',
+                            teal: '#017E84'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-odoo-grayBg min-h-screen flex flex-col font-sans text-slate-800">
+
+    <!-- TOP NAVBAR -->
+    <header class="bg-odoo-purple text-white h-12 flex items-center justify-between px-4 shadow-md flex-shrink-0">
+        <div class="flex items-center gap-4">
+            <a href="apps.html" class="hover:bg-white/10 p-1.5 rounded transition">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+            </a>
+            <h1 class="font-bold text-sm tracking-wide">SARodee <span class="font-normal opacity-80">| Manajemen Stok</span></h1>
+        </div>
+        <div class="flex items-center gap-2 text-xs">
+            <span class="bg-teal-600 px-2.5 py-1 rounded-full font-medium">🤖 AI Forecasting Active</span>
+        </div>
+    </header>
+
+    <!-- CONTENT WRAPPER -->
+    <main class="max-w-7xl mx-auto w-full p-4 lg:p-6 space-y-6 flex-grow">
+        
+        <!-- AI INSIGHT CARD (Keunggulan Utama SARodee) -->
+        <div class="bg-gradient-to-r from-slate-900 to-odoo-purple text-white rounded-xl p-5 shadow-sm border border-slate-800 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+            <div>
+                <div class="flex items-center gap-2">
+                    <span class="text-xl">💡</span>
+                    <h2 class="font-bold text-base tracking-wide text-amber-400">Rekomendasi Pintar AI SARodee</h2>
+                </div>
+                <p class="text-sm text-slate-300 mt-1 max-w-2xl">
+                    Berdasarkan tren penjualan 7 hari terakhir, stok <strong class="text-white">Red Velvet Slice Cake</strong> diperkirakan akan habis dalam <strong class="text-white">2 hari lagi</strong>. Disarankan melakukan *restock* sebanyak 20 unit sebelum hari Jumat.
+                </p>
+            </div>
+            <button class="bg-white hover:bg-slate-100 text-odoo-purple font-bold text-xs py-2 px-4 rounded-lg shadow transition whitespace-nowrap">
+                Pesan Otomatis via Supplier
+            </button>
+        </div>
+
+        <!-- CONTROL BAR (Tombol Aksi & Cari) -->
+        <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 flex flex-col sm:flex-row justify-between items-center gap-4">
+            <div class="flex gap-2 w-full sm:w-auto">
+                <button class="bg-odoo-teal hover:bg-opacity-95 text-white font-semibold text-xs py-2.5 px-4 rounded shadow transition">
+                    + Tambah Produk Baru
+                </button>
+                <button class="bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-xs py-2.5 px-4 rounded border border-slate-200 transition">
+                    Eksport Excel
+                </button>
+            </div>
+            <div class="w-full sm:w-72">
+                <input type="text" placeholder="Cari berdasarkan SKU atau nama..." 
+                    class="w-full bg-slate-50 border border-slate-200 rounded px-3 py-2 text-xs focus:outline-none focus:bg-white focus:ring-1 focus:ring-odoo-purple transition">
+            </div>
+        </div>
+
+        <!-- TABLE DATA INVENTARIS -->
+        <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse text-sm">
+                    <thead>
+                        <tr class="bg-slate-50 border-b border-slate-200 text-slate-600 font-semibold text-xs uppercase tracking-wider">
+                            <th class="p-4">Nama Produk</th>
+                            <th class="p-4">SKU / Kode</th>
+                            <th class="p-4">Kategori</th>
+                            <th class="p-4">Harga Modal</th>
+                            <th class="p-4">Harga Jual</th>
+                            <th class="p-4">Sisa Stok</th>
+                            <th class="p-4 text-center">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100 text-slate-700">
+                        <!-- Baris 1 -->
+                        <tr class="hover:bg-slate-50/80 transition">
+                            <td class="p-4 font-semibold text-slate-900">Kopi Susu Gula Aren</td>
+                            <td class="p-4 text-xs font-mono text-slate-500">SKU-CF-001</td>
+                            <td class="p-4"><span class="px-2 py-0.5 bg-slate-100 text-slate-600 text-xs rounded">Coffee</span></td>
+                            <td class="p-4">Rp10.000</td>
+                            <td class="p-4 font-medium text-odoo-purple">Rp22.000</td>
+                            <td class="p-4 font-bold">85 Unit</td>
+                            <td class="p-4 text-center"><span class="px-2.5 py-0.5 bg-emerald-100 text-emerald-800 text-xs font-medium rounded-full">Aman</span></td>
+                        </tr>
+                        <!-- Baris 2 -->
+                        <tr class="hover:bg-slate-50/80 transition">
+                            <td class="p-4 font-semibold text-slate-900">Croissant Almond Premium</td>
+                            <td class="p-4 text-xs font-mono text-slate-500">SKU-PS-012</td>
+                            <td class="p-4"><span class="px-2 py-0.5 bg-slate-100 text-slate-600 text-xs rounded">Pastry</span></td>
+                            <td class="p-4">Rp15.000</td>
+                            <td class="p-4 font-medium text-odoo-purple">Rp28.000</td>
+                            <td class="p-4 font-bold">12 Unit</td>
+                            <td class="p-4 text-center"><span class="px-2.5 py-0.5 bg-amber-100 text-amber-800 text-xs font-medium rounded-full">Menipis</span></td>
+                        </tr>
+                        <!-- Baris 3 -->
+                        <tr class="hover:bg-slate-50/80 transition">
+                            <td class="p-4 font-semibold text-slate-900">Red Velvet Slice Cake</td>
+                            <td class="p-4 text-xs font-mono text-slate-500">SKU-PS-015</td>
+                            <td class="p-4"><span class="px-2 py-0.5 bg-slate-100 text-slate-600 text-xs rounded">Pastry</span></td>
+                            <td class="p-4">Rp18.000</td>
+                            <td class="p-4 font-medium text-odoo-purple">Rp32.000</td>
+                            <td class="p-4 font-bold text-red-600">4 Unit</td>
+                            <td class="p-4 text-center"><span class="px-2.5 py-0.5 bg-red-100 text-red-800 text-xs font-medium rounded-full">Kritikal</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="bg-white border-t border-slate-200 py-3 text-center text-xs text-slate-400">
+        SARodee Inventory System Dashboard
+    </footer>
+
+</body>
+</html>

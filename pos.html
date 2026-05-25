@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Point of Sale - SARodee</title>
+    <!-- Tailwind CSS via CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        odoo: {
+                            purple: '#714B67',
+                            dark: '#1E293B',
+                            grayBg: '#F3F4F6',
+                            greenPay: '#017E84'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-odoo-grayBg h-screen flex flex-col font-sans text-slate-800 overflow-hidden">
+
+    <!-- 1. TOP NAVBAR -->
+    <header class="bg-odoo-purple text-white h-12 flex items-center justify-between px-4 shadow-md flex-shrink-0">
+        <div class="flex items-center gap-4">
+            <a href="apps.html" class="hover:bg-white/10 p-1.5 rounded transition" title="Kembali ke Menu Utama">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+            </a>
+            <h1 class="font-bold text-sm tracking-wide">SARodee <span class="font-normal opacity-80">| Point of Sale</span></h1>
+        </div>
+        
+        <div class="flex items-center gap-4 text-xs">
+            <div class="bg-white/10 px-2.5 py-1 rounded-full border border-white/20 flex items-center gap-1.5">
+                <span class="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></span>
+                <span>Kasir: <strong>Toko Utama</strong></span>
+            </div>
+            <div class="bg-teal-600 px-2.5 py-1 rounded-full flex items-center gap-1">
+                <span>🤖 AI Active</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- 2. MAIN LAYOUT CONTAINER -->
+    <div class="flex-1 flex overflow-hidden">
+
+        <!-- KIRI: KERANJANG BELANJA & PEMBAYARAN -->
+        <aside class="w-[400px] xl:w-[450px] bg-white border-r border-slate-200 flex flex-col justify-between flex-shrink-0">
+            <!-- Daftar Belanja Terpilih (Dihidupkan via JS) -->
+            <div class="flex-1 overflow-y-auto p-4 space-y-3" id="cart-container">
+                <!-- Data kosong akan diisi oleh JavaScript -->
+                <div id="empty-cart-msg" class="text-center text-slate-400 py-12 text-sm flex flex-col items-center justify-center gap-2">
+                    <span>🛒</span>
+                    <span>Keranjang belanja masih kosong.<br>Klik produk di sebelah kanan.</span>
+                </div>
+            </div>
+
+            <!-- Panel Ringkasan Harga & Tombol Bayar -->
+            <div class="border-t border-slate-200 p-4 bg-slate-50 space-y-4">
+                <div class="space-y-1.5 text-sm">
+                    <div class="flex justify-between text-slate-600">
+                        <span>Subtotal</span>
+                        <span id="summary-subtotal">Rp0</span>
+                    </div>
+                    <div class="flex justify-between text-slate-600">
+                        <span>Pajak (PB1 10%)</span>
+                        <span id="summary-tax">Rp0</span>
+                    </div>
+                    <div class="h-px bg-slate-200 my-2"></div>
+                    <div class="flex justify-between text-lg font-bold text-slate-900">
+                        <span>Total Akhir</span>
+                        <span class="text-odoo-purple" id="summary-total">Rp0</span>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-2">
+                    <button onclick="alert('Fitur diskon segera hadir!')" class="bg-slate-200 hover:bg-slate-300 text-slate-800 font-semibold py-3 rounded text-sm transition">
+                        Diskon / Kupon
+                    </button>
+                    <button onclick="alert('Fitur manajemen pelanggan segera hadir!')" class="bg-slate-200 hover:bg-slate-300 text-slate-800 font-semibold py-3 rounded text-sm transition">
+                        Pilih Pelanggan
+                    </button>
+                </div>
+
+                <!-- Tombol Eksekusi Bayar Utama -->
+                <button onclick="checkout()" 
+                    class="w-full bg-odoo-greenPay hover:bg-opacity-90 text-white font-bold py-4 rounded-xl text-center shadow transition text-base flex items-center justify-center gap-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+                    Bayar & Cetak Struk (<span id="btn-total-pay">Rp0</span>)
+                </button>
+            </div>
+        </aside>
+
+        <!-- KANAN: KATALOG PRODUK -->
+        <main class="flex-1 flex flex-col overflow-hidden">
+            <!-- Filter Kategori & Kolom Pencarian -->
+            <div class="bg-white border-b border-slate-200 p-4 flex flex-col sm:flex-row gap-4 justify-between items-center flex-shrink-0">
+                <div class="w-full sm:w-72 relative">
+                    <input type="text" id="search-input" oninput="searchProduct()" placeholder="Cari nama produk..." 
+                        class="w-full bg-slate-100 border border-slate-200 rounded px-3 py-2 text-sm focus:outline-none focus:bg-white focus:ring-1 focus:ring-odoo-purple transition">
+                </div>
+                <div class="flex gap-1.5 overflow-x-auto w-full sm:w-auto py-1">
+                    <button class="px-4 py-1.5 bg-odoo-purple text-white text-xs font-semibold rounded shadow-sm whitespace-nowrap">Semua Menu</button>
+                </div>
+            </div>
+
+            <!-- Grid Katalog Item Produk (Di-render via JS) -->
+            <div class="flex-1 overflow-y-auto p-6">
+                <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-5 gap-4" id="product-grid">
+                    <!-- Produk akan dimasukkan secara otomatis oleh JavaScript di bawah -->
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- LOGIKA JAVASCRIPT UNTUK MENGHIDUPKAN KASIR -->
+    <!-- ========================================== -->
+    <script>
+        // 1. Data Produk (Simulasi Database)
+        const products = [
+            { id: 1, name: "Kopi Susu Gula Aren", price: 22000, stock: 85, icon: "☕", category: "Coffee" },
+            { id: 2, name: "Croissant Almond Premium", price: 28000, stock: 12, icon: "🥐", category: "Pastry" },
+            { id: 3, name: "Matcha Latte Ice", price: 24000, stock: 40, icon: "🍵", category: "Non-Coffee" },
+            { id: 4, name: "Red Velvet Slice Cake", price: 32000, stock: 4, icon: "🍰", category: "Pastry" },
+            { id: 5, name: "Fresh Lemonade Soda", price: 18000, stock: 100, icon: "🥤", category: "Non-Coffee" }
+        ];
+
+        // 2. State App (Keranjang Belanja)
+        let cart = [];
+
+        // 3. Fungsi Menampilkan Produk ke Layar
+        function renderProducts(filteredProducts = products) {
+            const grid = document.getElementById('product-grid');
+            grid.innerHTML = '';
+
+            filteredProducts.forEach(prod => {
+                const card = `
+                    <button onclick="addToCart(${prod.id})" class="bg-white border border-slate-200 rounded-xl p-3 text-left flex flex-col justify-between hover:border-odoo-purple hover:shadow-md transition active:scale-95">
+                        <div class="aspect-square w-full bg-slate-100 rounded-lg mb-3 flex items-center justify-center text-3xl">${prod.icon}</div>
+                        <div>
+                            <span class="text-xs font-bold text-slate-400 block uppercase tracking-tight">${prod.category}</span>
+                            <h3 class="font-bold text-sm text-slate-800 mt-0.5 line-clamp-2">${prod.name}</h3>
+                        </div>
+                        <div class="mt-4 flex justify-between items-center">
+                            <span class="text-xs ${prod.stock <= 5 ? 'text-red-600 font-bold' : 'text-emerald-600 font-medium'}">Stok: ${prod.stock}</span>
+                            <span class="text-sm font-extrabold text-odoo-purple">Rp${prod.price.toLocaleString('id-ID')}</span>
+                        </div>
+                    </button>
+                `;
+                grid.innerHTML += card;
+            });
+        }
+
+        // 4. Fungsi Menambahkan Item ke Keranjang
+        function addToCart(productId) {
+            const product = products.find(p => p.id === productId);
+            const exist = cart.find(item => item.id === productId);
+
+            if (exist) {
+                if (exist.qty < product.stock) {
+                    exist.qty++;
+                } else {
+                    alert('Stok tidak mencukupi!');
+                    return;
+                }
+            } else {
+                cart.push({ ...product, qty: 1 });
+            }
+            updateCart();
+        }
+
+        // 5. Fungsi Mengubah Jumlah/Hapus di Keranjang
+        function changeQty(id, delta) {
+            const item = cart.find(i => i.id === id);
+            const product = products.find(p => p.id === id);
+
+            if (item) {
+                item.qty += delta;
+                if (item.qty > product.stock) {
+                    alert('Stok maksimal tercapai!');
+                    item.qty = product.stock;
+                }
+                if (item.qty <= 0) {
+                    cart = cart.filter(i => i.id !== id);
+                }
+            }
+            updateCart();
+        }
+
+        // 6. Fungsi Update Tampilan Keranjang & Kalkulasi Uang
+        function updateCart() {
+            const container = document.getElementById('cart-container');
+            
+            if (cart.length === 0) {
+                container.innerHTML = `
+                    <div id="empty-cart-msg" class="text-center text-slate-400 py-12 text-sm flex flex-col items-center justify-center gap-2">
+                        <span>🛒</span>
+                        <span>Keranjang belanja masih kosong.<br>Klik produk di sebelah kanan.</span>
+                    </div>
+                `;
+                document.getElementById('summary-subtotal').innerText = "Rp0";
+                document.getElementById('summary-tax').innerText = "Rp0";
+                document.getElementById('summary-total').innerText = "Rp0";
+                document.getElementById('btn-total-pay').innerText = "Rp0";
+                return;
+            }
+
+            container.innerHTML = '';
+            let subtotal = 0;
+
+            cart.forEach(item => {
+                const totalItemPrice = item.price * item.qty;
+                subtotal += totalItemPrice;
+
+                const itemRow = `
+                    <div class="flex justify-between items-center p-3 bg-slate-50 rounded-lg border border-slate-100">
+                        <div>
+                            <h4 class="font-semibold text-sm text-slate-900">${item.name}</h4>
+                            <p class="text-xs text-slate-500 mt-0.5">Rp${item.price.toLocaleString('id-ID')}</p>
+                        </div>
+                        <div class="text-right flex items-center gap-3">
+                            <div class="flex items-center border border-slate-300 rounded bg-white">
+                                <button onclick="changeQty(${item.id}, -1)" class="px-2 py-0.5 text-slate-600 hover:bg-slate-100 font-bold">-</button>
+                                <span class="px-2 text-xs font-semibold">${item.qty}</span>
+                                <button onclick="changeQty(${item.id}, 1)" class="px-2 py-0.5 text-slate-600 hover:bg-slate-100 font-bold">+</button>
+                            </div>
+                            <p class="font-bold text-sm text-odoo-purple w-20 text-right">Rp${totalItemPrice.toLocaleString('id-ID')}</p>
+                        </div>
+                    </div>
+                `;
+                container.innerHTML += itemRow;
+            });
+
+            // Hitung Pajak PB1 (10%)
+            const tax = subtotal * 0.1;
+            const total = subtotal + tax;
+
+            // Update Teks Angka di Layar
+            document.getElementById('summary-subtotal').innerText = `Rp${subtotal.toLocaleString('id-ID')}`;
+            document.getElementById('summary-tax').innerText = `Rp${tax.toLocaleString('id-ID')}`;
+            document.getElementById('summary-total').innerText = `Rp${total.toLocaleString('id-ID')}`;
+            document.getElementById('btn-total-pay').innerText = `Rp${total.toLocaleString('id-ID')}`;
+        }
+
+        // 7. Fitur Live Search Bar
+        function searchProduct() {
+            const query = document.getElementById('search-input').value.toLowerCase();
+            const filtered = products.filter(p => p.name.toLowerCase().includes(query));
+            renderProducts(filtered);
+        }
+
+        // 8. Simulasi Transaksi Berhasil (Checkout)
+        function checkout() {
+            if (cart.length === 0) {
+                alert('Keranjang Anda masih kosong!');
+                return;
+            }
+            
+            // Kurangi stok asli (Simulasi)
+            cart.forEach(item => {
+                const prod = products.find(p => p.id === item.id);
+                if (prod) prod.stock -= item.qty;
+            });
+
+            alert('🎉 Transaksi Berhasil!\nStruk telah dicetak dan data disimpan ke sistem.');
+            cart = [];
+            updateCart();
+            renderProducts();
+        }
+
+        // Jalankan fungsi tampilkan produk pertama kali saat halaman dimuat
+        renderProducts();
+    </script>
+</body>
+</html>
