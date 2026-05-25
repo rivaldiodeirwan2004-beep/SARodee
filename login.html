@@ -3,73 +3,112 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Masuk - SARodee AI POS</title>
-    <!-- Tailwind CSS via CDN -->
+    <title>Login - SARodee POS</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Ambil pustaka Supabase resmi -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
         tailwind.config = {
             theme: {
                 extend: {
                     colors: {
-                        brand: {
-                            primary: '#714B67', // Warna ungu khas Odoo yang elegan
-                            dark: '#017E84',    // Warna teal aksen Odoo
-                            bg: '#F9F9F9'
-                        }
+                        odoo: { purple: '#714B67', dark: '#1E293B', grayBg: '#F3F4F6' }
                     }
                 }
             }
         }
     </script>
 </head>
-<body class="bg-brand-bg min-h-screen flex flex-col justify-between font-sans text-slate-800">
+<body class="bg-odoo-grayBg h-screen flex items-center justify-center p-4">
 
-    <!-- Konten Utama -->
-    <div class="flex-grow flex items-center justify-center p-4">
-        <div class="w-full max-w-md bg-white rounded-lg shadow-sm border border-slate-200 p-8">
-            
-            <!-- Logo SARodee -->
-            <div class="text-center mb-8">
-                <h1 class="text-3xl font-bold text-brand-primary tracking-tight">SARodee<span class="text-brand-dark">.ai</span></h1>
-                <p class="text-sm text-slate-500 mt-1">Smart AI Point of Sale Platform</p>
-            </div>
-
-            <!-- Form Login -->
-            <form action="apps.html" method="GET" class="space-y-5">
-                <div>
-                    <label for="email" class="block text-sm font-medium text-slate-700 mb-1">Email</label>
-                    <input type="email" id="email" required placeholder="nama@toko.com"
-                        class="w-full px-3 py-2 border border-slate-300 rounded focus:outline-none focus:ring-1 focus:ring-brand-primary focus:border-brand-primary transition">
-                </div>
-
-                <div>
-                    <div class="flex justify-between items-center mb-1">
-                        <label for="password" class="block text-sm font-medium text-slate-700">Kata Sandi</label>
-                        <a href="index.html" class="...">Masuk ke Kasir</a>
-                    </div>
-                    <input type="password" id="password" required placeholder="••••••••"
-                        class="w-full px-3 py-2 border border-slate-300 rounded focus:outline-none focus:ring-1 focus:ring-brand-primary focus:border-brand-primary transition">
-                </div>
-
-                <!-- Tombol Masuk (Di-link-kan ke halaman apps.html untuk simulasi) -->
-                <button type="submit" 
-                    class="w-full bg-brand-primary hover:bg-opacity-90 text-white font-medium py-2 px-4 rounded transition shadow-sm text-sm">
-                    Masuk
-                </button>
-            </form>
-
-            <!-- Registrasi Tautan -->
-            <div class="mt-6 text-center text-sm text-slate-600 border-t border-slate-100 pt-4">
-                Belum punya akun? <a href="register.html" class="text-brand-dark font-semibold hover:underline">Daftar Gratis</a>
-            </div>
-
+    <div class="bg-white p-8 rounded-2xl shadow-xl w-full max-w-md border border-slate-100">
+        <!-- Logo / Judul -->
+        <div class="text-center mb-8">
+            <h1 class="text-3xl font-extrabold text-odoo-purple tracking-tight">SARodee</h1>
+            <p class="text-sm text-slate-500 mt-2">Point of Sale & Management System</p>
         </div>
+
+        <!-- Form Login -->
+        <form id="login-form" onsubmit="handleLogin(event)" class="space-y-5">
+            <div>
+                <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1">Email Pengguna</label>
+                <input type="email" id="email" required placeholder="nama@toko.com" 
+                    class="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:outline-none focus:bg-white focus:ring-2 focus:ring-odoo-purple/20 focus:border-odoo-purple transition">
+            </div>
+
+            <div>
+                <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1">Kata Sandi</label>
+                <input type="password" id="password" required placeholder="••••••••" 
+                    class="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:outline-none focus:bg-white focus:ring-2 focus:ring-odoo-purple/20 focus:border-odoo-purple transition">
+            </div>
+
+            <div class="text-right">
+                <a href="#" onclick="alert('Silakan hubungi administrator utama untuk reset sandi.')" class="text-xs text-odoo-purple hover:underline font-medium">Lupa kata sandi?</a>
+            </div>
+
+            <!-- Tombol Masuk Utama (Hubungkan ke Supabase) -->
+            <button type="submit" id="btn-login"
+                class="w-full bg-odoo-purple hover:bg-opacity-95 text-white font-bold py-3 rounded-lg text-sm shadow transition">
+                Masuk Sistem
+            </button>
+        </form>
+
+        <div class="relative my-6 flex items-center justify-center">
+            <div class="absolute inset-0 flex items-center"><div class="w-full border-t border-slate-200"></div></div>
+            <span class="relative bg-white px-3 text-xs text-slate-400 font-medium uppercase">Atau Akses Cepat</span>
+        </div>
+
+        <!-- TOMBOL MASUK GRATIS (DEMO MODE / BYPASS) -->
+        <!-- Tombol ini sengaja dibuat agar Anda bisa langsung masuk ke aplikasi tanpa perlu mendaftarkan email terlebih dahulu -->
+        <button onclick="loginGratis()" 
+            class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 rounded-lg text-sm shadow transition flex items-center justify-center gap-2">
+            ⚡ Masuk Instan (Mode Demo)
+        </button>
     </div>
 
-    <!-- Kaki Halaman (Footer ala Odoo) -->
-    <footer class="text-center py-4 text-xs text-slate-400 border-t border-slate-200 bg-white">
-        Powered by <span class="font-semibold text-brand-primary">SARodee AI</span>. Bersama UMKM Indonesia maju.
-    </footer>
+    <script>
+        // Kredensial Proyek Supabase Cloud Anda
+        const SUPABASE_URL = "https://taxvlatlimjzidgrfvzc.supabase.co"; 
+        const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRheHZsYXRsaW1qemlkZ3JmdnpjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk3MTQwMzEsImV4cCI6MjA5NTI5MDAzMX0.83LI07DeoVa3HA9uQL7LCut-aY-b1SjWKUV70meQTpQ";
+        
+        const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
+        // Fungsi 1: Login Resmi via Supabase Auth
+        async function handleLogin(event) {
+            event.preventDefault();
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const btn = document.getElementById('btn-login');
+
+            btn.innerText = "Memeriksa...";
+            btn.disabled = true;
+
+            try {
+                const { data, error } = await supabase.auth.signInWithPassword({
+                    email: email,
+                    password: password,
+                });
+
+                if (error) throw error;
+
+                // Jika sukses, simpan status login lalu lempar ke halaman menu utama (apps.html)
+                localStorage.setItem('isLoggedIn', 'true');
+                window.location.href = "apps.html";
+
+            } catch (error) {
+                alert("Gagal Masuk: " + error.message + "\n\nTip: Jika belum mendaftarkan email di Supabase Auth, silakan gunakan tombol 'Masuk Instan' di bawah.");
+                btn.innerText = "Masuk Sistem";
+                btn.disabled = false;
+            }
+        }
+
+        // Fungsi 2: Masuk Gratis / Bypass Tanpa Email
+        function loginGratis() {
+            // Kita set penanda di memori browser bahwa pengguna ini sudah diizinkan masuk
+            localStorage.setItem('isLoggedIn', 'true');
+            // Alihkan langsung ke halaman menu utama
+            window.location.href = "apps.html";
+        }
+    </script>
 </body>
 </html>
